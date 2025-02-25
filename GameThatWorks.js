@@ -11,10 +11,9 @@ console.log('script running');
 let player;
 const MOVEMENTSPEED = 7;
 let score = 0;
-
-let coin;
-const COINTIMEOUT = 3000;
-let coinArray = [];
+let coins;
+const COINTIMEOUT = 4000;
+let gameState = 'play';
 
 /*******************************************************/
 // setup()
@@ -27,10 +26,12 @@ function setup() {
     // Player 
     player = new Sprite(width/2, height/2, 30, 30, 'd');
     player.color = 'white';
-    createCoin();
+    
     
     // Score
-    player.collides(coin, coinCollected);
+    coins = new Group();
+    createCoin();
+    player.collides(coins, coinCollected);
 }
 
 /*******************************************************/
@@ -38,13 +39,55 @@ function setup() {
 // 
 /*******************************************************/
 function draw() {
+
+    if (gameState == 'play') {
+        runGame();
+    } else if (gameState == 'lose') {
+        // LoseScreen();
+    }
+
+
+
+    
+    
+}
+
+/*******************************************************/
+// runGame()
+// 
+/*******************************************************/
+
+function runGame() {
     movePlayer();
     background('black');
     
     // Score 
     displayScore();
 
-    checkCoinTime();
+    // Coins
+    if (random(0,1000) < 10) {
+        console.log("coin created")
+        createCoin();
+    }
+    
+    // Check if coin should be removed based on how long it has been alive
+    for (let i=0; i<coins.length; i++) {
+        if (checkCoinTime(coins[i])) {
+            console.log('Game lost')
+            coins[i].remove();
+            gameState = 'lose';
+        }
+    }
+}
+
+/*******************************************************/
+// loseScreen()
+// 
+/*******************************************************/
+function loseScreen() {
+    allSprites.remove();
+    background('red');
+    text('YOU LOSE');
 }
 
 /*******************************************************/
@@ -98,18 +141,20 @@ function displayScore() {
 // Output: N/A
 /*******************************************************/
 function createCoin () {
-    coin = new Sprite(random(0, width), random(0, height), 20, 's');
+    coin = new Sprite(random(0, width), random(0, height), 20, 'd');
     coin.color = 'yellow';
     coin.spawnTime = millis();
     coin.collected = false;
+    coins.add(coin)
 }
 
-function checkCoinTime() {
-    if (coin.spawnTime + COINTIMEOUT < millis() && coinCollected == false) {
-        // Player loses
-        coin.remove();
-        score = 'you lose!';
+function checkCoinTime(_coin) {
+    if (_coin.spawnTime + COINTIMEOUT < millis()) {
+        // Coin should be removed
+        console.log('checkCoinTime() returned true')
+        return true;
     }
+    return false;
 }
 
 /*******************************************************/
@@ -128,5 +173,4 @@ function coinCollected(_player, _coin) {
     // Fix player rotation
     player.rotationSpeed = 0;
     player.rotation = 0;
-    
 }
