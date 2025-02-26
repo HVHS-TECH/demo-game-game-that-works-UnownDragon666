@@ -11,9 +11,10 @@ console.log('script running');
 let player;
 let score = 0;
 let coins;
-const COINTIMEOUT = 4000;
-const MOVEMENTSPEED = 7;
+const COINTIMEOUT = 5000;
+const MOVEMENTSPEED = 8;
 let gameState = 'play';
+let retryButton;
 
 /*******************************************************/
 // setup()
@@ -62,7 +63,7 @@ function runGame() {
     displayScore();
 
     // Coins
-    if (random(0,1000) < 10) {
+    if (random(0, 5000) < 15) {
         console.log("coin created")
         createCoin();
     }
@@ -90,7 +91,33 @@ function loseScreen() {
     background('red');
     fill('white');
     text('YOU LOSE', width/2, height/2);
-    text('SCORE: ' + score, width/2, height/2 - 100)
+    text('SCORE: ' + score, width/2, height/2 - 100);
+
+    let loseState = 0;
+
+    
+    if (loseState < 1) {
+        // Button to restart game
+        retryButton = createButton('RETRY', 'button');
+        retryButton.position(width/2, height/2 + 100);
+        retryButton.mousePressed(restartGame);
+        loseState++;
+    }
+    
+}
+
+/*******************************************************/
+// restartGame()
+// Changes gamescreen back to runGame()
+// Called on loseScreen, restarts game
+// Input: N/A 
+// Output: N/A
+/*******************************************************/
+function restartGame() {
+    score = 0;
+    gameState = 'play';
+
+    setup();
 }
 
 /*******************************************************/
@@ -176,6 +203,7 @@ function checkCoinTime(_coin) {
 // Output: N/A
 /*******************************************************/
 function coinCollected(_player, _coin) {
+    console.log('coin collected')
     // Increase score
     score++;
     // Delete coin
