@@ -9,10 +9,10 @@ console.log('script running');
 // Variables and constants
 /*******************************************************/ 
 let player;
-const MOVEMENTSPEED = 7;
 let score = 0;
 let coins;
 const COINTIMEOUT = 4000;
+const MOVEMENTSPEED = 7;
 let gameState = 'play';
 
 /*******************************************************/
@@ -39,24 +39,21 @@ function setup() {
 // 
 /*******************************************************/
 function draw() {
-
     if (gameState == 'play') {
         runGame();
     } else if (gameState == 'lose') {
-        // LoseScreen();
+        // User lost 
+        loseScreen();
     }
-
-
-
-    
-    
 }
 
 /*******************************************************/
 // runGame()
-// 
+// Changes screen to game screen
+// Called in draw loop when game starts
+// Input: N/A 
+// Output: N/A
 /*******************************************************/
-
 function runGame() {
     movePlayer();
     background('black');
@@ -82,18 +79,24 @@ function runGame() {
 
 /*******************************************************/
 // loseScreen()
-// 
+// Changes gamescreen to lose screen
+// Called in draw loop when a coin times out
+// Input: N/A 
+// Output: N/A
 /*******************************************************/
 function loseScreen() {
-    allSprites.remove();
+    player.remove();
+    coins.remove();
     background('red');
-    text('YOU LOSE');
+    fill('white');
+    text('YOU LOSE', width/2, height/2);
+    text('SCORE: ' + score, width/2, height/2 - 100)
 }
 
 /*******************************************************/
 // movePlayer()
 // Moves player sprite
-// Called in draw loop
+// Called in runGame()
 // Input: N/A 
 // Output: N/A
 /*******************************************************/
@@ -124,7 +127,7 @@ function movePlayer() {
 /*******************************************************/
 // displayScore()
 // Displays score
-// Called in draw loop
+// Called in runGame()
 // Input: N/A 
 // Output: N/A
 /*******************************************************/
@@ -136,7 +139,7 @@ function displayScore() {
 /*******************************************************/
 // createCoin()
 // Create coins
-// Called in 
+// Called in runGame()
 // Input: N/A 
 // Output: N/A
 /*******************************************************/
@@ -147,6 +150,14 @@ function createCoin () {
     coin.collected = false;
     coins.add(coin)
 }
+
+/*******************************************************/
+// checkCoinTime()
+// Checks if coins should be timed out
+// Called in runGame()
+// Input: _coin (an object in the coins array)
+// Output: boolean variable
+/*******************************************************/
 
 function checkCoinTime(_coin) {
     if (_coin.spawnTime + COINTIMEOUT < millis()) {
@@ -160,7 +171,7 @@ function checkCoinTime(_coin) {
 /*******************************************************/
 // coinCollected()
 // Collect coins
-// Called in 
+// Called in setup after player collides with a coin
 // Input: N/A 
 // Output: N/A
 /*******************************************************/
