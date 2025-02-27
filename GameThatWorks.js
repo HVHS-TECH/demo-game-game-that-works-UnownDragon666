@@ -12,9 +12,10 @@ let player;
 let score = 0;
 let coins;
 const COINTIMEOUT = 5000;
-const MOVEMENTSPEED = 8;
+const MOVEMENTSPEED = 9;
 let gameState = 'play';
 let retryButton;
+let loseState = false;
 
 /*******************************************************/
 // setup()
@@ -46,6 +47,7 @@ function draw() {
         // User lost 
         loseScreen();
     }
+    console.log(player.x)
 }
 
 /*******************************************************/
@@ -63,7 +65,7 @@ function runGame() {
     displayScore();
 
     // Coins
-    if (random(0, 5000) < 15) {
+    if (random(0, 5000) < 30) {
         console.log("coin created")
         createCoin();
     }
@@ -92,16 +94,13 @@ function loseScreen() {
     fill('white');
     text('YOU LOSE', width/2, height/2);
     text('SCORE: ' + score, width/2, height/2 - 100);
-
-    let loseState = 0;
-
     
-    if (loseState < 1) {
+    if (loseState == false) {
         // Button to restart game
         retryButton = createButton('RETRY', 'button');
         retryButton.position(width/2, height/2 + 100);
         retryButton.mousePressed(restartGame);
-        loseState++;
+        loseState = true;
     }
     
 }
@@ -116,7 +115,8 @@ function loseScreen() {
 function restartGame() {
     score = 0;
     gameState = 'play';
-
+    loseState = false;
+    retryButton.remove();
     setup();
 }
 
@@ -171,7 +171,7 @@ function displayScore() {
 // Output: N/A
 /*******************************************************/
 function createCoin () {
-    coin = new Sprite(random(0, width), random(0, height), 20, 'd');
+    coin = new Sprite(random(10, width-10), random(10, height-10), 20, 'd');
     coin.color = 'yellow';
     coin.spawnTime = millis();
     coin.collected = false;
@@ -212,4 +212,6 @@ function coinCollected(_player, _coin) {
     // Fix player rotation
     player.rotationSpeed = 0;
     player.rotation = 0;
+    player.vel.x = 0;
+    player.vel.y = 0;
 }
