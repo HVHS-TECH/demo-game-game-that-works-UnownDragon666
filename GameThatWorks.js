@@ -10,12 +10,15 @@ console.log('script running');
 /*******************************************************/ 
 let player;
 let score = 0;
+let highScore = 0;
 let coins;
-const COINTIMEOUT = 5000;
-const MOVEMENTSPEED = 9;
 let gameState = 'play';
 let retryButton;
 let loseState = false;
+
+const COINTIMEOUT = 5000;
+const MOVEMENTSPEED = 9;
+const COINSIZE = 20;
 
 /*******************************************************/
 // setup()
@@ -29,8 +32,7 @@ function setup() {
     player = new Sprite(width/2, height/2, 30, 30, 'd');
     player.color = 'white';
     
-    
-    // Score
+    // Coins
     coins = new Group();
     createCoin();
     player.collides(coins, coinCollected);
@@ -47,6 +49,7 @@ function draw() {
         // User lost 
         loseScreen();
     }
+    highScoreDisplay();
 }
 
 /*******************************************************/
@@ -163,6 +166,20 @@ function displayScore() {
 }
 
 /*******************************************************/
+// highScoreDisplay()
+// Displays highest score achieved by player.
+// Called in draw loop
+// Input: N/A 
+// Output: N/A
+/*******************************************************/
+function highScoreDisplay() {
+    if (score >= highScore) {
+        highScore = score;
+    }
+    text("High Score: " + highScore, width/2 - 50, 30);
+}
+
+/*******************************************************/
 // createCoin()
 // Create coins
 // Called in runGame()
@@ -170,7 +187,7 @@ function displayScore() {
 // Output: N/A
 /*******************************************************/
 function createCoin () {
-    coin = new Sprite(random(10, width-10), random(10, height-10), 20, 'd');
+    coin = new Sprite(random(10, width-10), random(10, height-10), COINSIZE, 'd');
     coin.color = 'yellow';
     coin.spawnTime = millis();
     coin.collected = false;
@@ -208,7 +225,7 @@ function coinCollected(_player, _coin) {
     // Delete coin
     _coin.collected = true;
     _coin.remove();
-    // Fix player rotation
+    // Fix player rotation and speed after collision
     player.rotationSpeed = 0;
     player.rotation = 0;
     player.vel.x = 0;
